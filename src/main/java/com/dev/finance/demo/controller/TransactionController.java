@@ -51,7 +51,6 @@ public class TransactionController {
 
     @PostMapping("/")
     public ResponseEntity<Transaction> create(@RequestBody Transaction transaction) {
-        System.out.println(transaction);
         Transaction newTransaction = transactionRepository.save(transaction);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTransaction);
     }
@@ -59,21 +58,20 @@ public class TransactionController {
     @PutMapping("/{id}")
     public ResponseEntity<Transaction> update(@PathVariable Long id, @RequestBody Transaction updatedTransaction) {
         Optional<Transaction> optionalTransaction = transactionRepository.findById(id);
-    
+
         if (optionalTransaction.isPresent()) {
             Transaction existingTransaction = optionalTransaction.get();
-            
+
             existingTransaction.setDescription(updatedTransaction.getDescription());
-            existingTransaction.setValue(updatedTransaction.getValue());
+            existingTransaction.setAmount(updatedTransaction.getAmount());
             existingTransaction.setCreated_at(updatedTransaction.getCreated_at());
-    
+
             Transaction updated = transactionRepository.save(existingTransaction);
             return ResponseEntity.ok(updated);
         }
-    
+
         return ResponseEntity.notFound().build();
     }
-    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

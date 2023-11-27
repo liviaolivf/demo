@@ -1,8 +1,13 @@
 package com.dev.finance.demo.model;
 
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -12,11 +17,11 @@ import jakarta.persistence.Table;
 @Table(name = "transactions")
 public class Transaction {
     public enum Type {
-        entrada,
-        saida
+        income,
+        expense
     }
 
-    public enum Option {
+    public enum Category {
         agua,
         alimentacao,
         aluguel,
@@ -30,22 +35,30 @@ public class Transaction {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_seq")
     private long id;
+    @Column(name = "description", nullable = false, length = 100)
     private String description;
-    private float value;
+    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal amount;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "`type`", nullable = false, length = 10)
     private Type type;
-    private Option option;
-    private String created_at;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "`category`", nullable = false, length = 20)
+    private Category category;
+    @Column(name = "created_at", nullable = false)
+    private ZonedDateTime created_at;
 
-    public Transaction() {}
+    public Transaction() {
+    }
 
-    public Transaction(long id, String description, float value, Type type, Option option, String created_at) {
+    public Transaction(long id, String description, BigDecimal amount, Type type, Category category,
+            ZonedDateTime created_at) {
         this.id = id;
         this.description = description;
-        this.value = value;
+        this.amount = amount;
         this.type = type;
-        this.option = option;
+        this.category = category;
         this.created_at = created_at;
     }
 
@@ -65,16 +78,20 @@ public class Transaction {
         this.description = description;
     }
 
-    public float getValue() {
-        return value;
+    public void setAmount(BigDecimal value) {
+        this.amount = value;
     }
 
-    public void setValue(float value) {
-        this.value = value;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public String getCreated_at() {
+    public ZonedDateTime getCreated_at() {
         return created_at;
+    }
+
+    public void setCreated_at(ZonedDateTime created_at) {
+        this.created_at = created_at;
     }
 
     public Type getType() {
@@ -85,15 +102,15 @@ public class Transaction {
         this.type = type;
     }
 
-    public Option getOption() {
-        return option;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setOption(Option option) {
-        this.option = option;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+        this.created_at = ZonedDateTime.parse(created_at, DateTimeFormatter.ISO_DATE_TIME);
     }
 }
