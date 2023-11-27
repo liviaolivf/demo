@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dev.finance.demo.model.Transaction;
 import com.dev.finance.demo.repository.TransactionRepository;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
@@ -50,6 +51,7 @@ public class TransactionController {
 
     @PostMapping("/")
     public ResponseEntity<Transaction> create(@RequestBody Transaction transaction) {
+        System.out.println(transaction);
         Transaction newTransaction = transactionRepository.save(transaction);
         return ResponseEntity.status(HttpStatus.CREATED).body(newTransaction);
     }
