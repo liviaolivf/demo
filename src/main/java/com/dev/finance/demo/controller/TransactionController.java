@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dev.finance.demo.model.Transaction;
 import com.dev.finance.demo.repository.TransactionRepository;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
@@ -57,21 +58,22 @@ public class TransactionController {
     @PutMapping("/{id}")
     public ResponseEntity<Transaction> update(@PathVariable Long id, @RequestBody Transaction updatedTransaction) {
         Optional<Transaction> optionalTransaction = transactionRepository.findById(id);
-    
+
         if (optionalTransaction.isPresent()) {
             Transaction existingTransaction = optionalTransaction.get();
-            
+
             existingTransaction.setDescription(updatedTransaction.getDescription());
-            existingTransaction.setValue(updatedTransaction.getValue());
+            existingTransaction.setAmount(updatedTransaction.getAmount());
             existingTransaction.setCreated_at(updatedTransaction.getCreated_at());
-    
+            existingTransaction.setType(updatedTransaction.getType());
+            existingTransaction.setCategory(updatedTransaction.getCategory());
+
             Transaction updated = transactionRepository.save(existingTransaction);
             return ResponseEntity.ok(updated);
         }
-    
+
         return ResponseEntity.notFound().build();
     }
-    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
